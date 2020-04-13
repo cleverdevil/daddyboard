@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+  <head>
+    <title>DaddyBoard</title>
+    <script>
+      var statusMap = {
+        AVAILABLE: '&#127881; Available',
+        QUIET_PLEASE: '&#128277; Quiet, please.',
+        DO_NOT_DISTURB: '&#128581; Do not disturb!'
+      }
+
+      function renderStatus(status) {
+        document.getElementById('current-status').innerHTML = statusMap[status];
+        document.body.className = status;
+      }
+
+      function updateStatus() {
+        var request = new Request('/');
+        fetch(request).then(function(response) {
+          return response.json();
+        }).then(function(resp) {
+          renderStatus(resp['status']['state']);
+          setTimeout(updateStatus, 1000);
+        });
+      }
+
+      window.onload = function() {
+        setTimeout(updateStatus, 1000);
+      }
+    </script>
+
+    <style>
+      h1 {
+        font-size: 180px;
+
+        margin: auto; /* Important */ 
+        text-align: center; 
+      }
+      
+      #container {
+        display: flex;
+        height: calc(100vh - 60px);
+        width: 100%; 
+        margin: auto;
+      }
+      
+      body.AVAILABLE {
+        background: green;
+        color: white;
+      }
+
+      body.QUIET_PLEASE {
+        background: yellow;
+        color: black;
+      }
+
+      body.DO_NOT_DISTURB {
+        background: red;
+        color: white;
+      }
+    </style>
+
+  </head>
+  <body>
+    <div id="container">
+      <h1 id="current-status">Loading...</h1>
+    </div>
+  </body>
+</html>
